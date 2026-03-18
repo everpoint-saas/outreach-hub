@@ -1,0 +1,15 @@
+name = "email-tracking"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# KV Namespace binding - ID will be filled after `wrangler kv namespace create`
+[[kv_namespaces]]
+binding = "TRACKING_DATA"
+id = "859e3e21c67541eebacb4897855bbd26"
+
+# Environment variables
+[vars]
+STATS_API_KEY = "1a66b85664c5574c9c078fa240299c17ea1d4929560074d6"
+
+# Custom domain: t.vertiq.net
+# Configure via Cloudflare Dashboard > Workers > email-tracking > Triggers > Custom Domains

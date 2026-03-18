@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local secrets
+gemini_api.txt
+token.json
+credentials.json
+secrets/*.json
+secrets/*.txt
+
+# Local env
+.env
+
+# Logs and debug artifacts
+logs/
+debug/
+debug_page_*.html
+debug_screenshot_*.png
+data/*.db
+data/history/
+data/drafts/
+
+# PyInstaller build
+build/
+dist/
+*.spec
+
+# Node modules
+node_modules/
+
+# CSV data
+*.csv
