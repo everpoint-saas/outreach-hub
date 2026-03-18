@@ -6,6 +6,8 @@ Desktop app for B2B cold outreach:
 - Create personalized Gmail drafts with AI (Gemini)
 - Track email opens and clicks
 
+**[Download Windows exe](https://github.com/everpoint-saas/outreach-hub/releases/latest)**
+
 ## Quick Start (exe)
 
 1. Download and unzip the release folder
