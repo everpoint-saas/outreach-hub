@@ -3,7 +3,6 @@ import os
 import pandas as pd
 from PySide6.QtCore import QThread, Signal
 import google_maps_scraper
-import usgbc_scraper
 from google_maps_scraper import ScraperState
 import process_leads
 import crawl_emails
@@ -68,26 +67,6 @@ class ScraperThread(QThread):
                     log_callback=self.log_signal.emit,
                     state=self.state
                 )
-            elif self.mode == "USGBC_ORG":
-                states = self.params.get("states", [])
-                subcategories = self.params.get("subcategories", [])
-                countries = self.params.get("countries", ["United States"])
-                result = usgbc_scraper.scrape_organizations(
-                    subcategories=subcategories,
-                    states=states,
-                    countries=countries,
-                    log_callback=self.log_signal.emit,
-                )
-            elif self.mode == "USGBC_PERSON":
-                states = self.params.get("states", [])
-                credentials = self.params.get("credentials", [])
-                countries = self.params.get("countries", ["United States"])
-                result = usgbc_scraper.scrape_people(
-                    credentials=credentials,
-                    states=states,
-                    countries=countries,
-                    log_callback=self.log_signal.emit,
-                )
             else:
                 result = None
 
@@ -132,8 +111,7 @@ class PipelineThread(QThread):
             builtins.print = custom_print
 
             try:
-                use_activity = bool(self.custom_settings.get("use_project_activity"))
-                process_leads.process_leads(use_project_activity=use_activity)
+                process_leads.process_leads()
                 self.finished_signal.emit("Pipeline completed successfully!")
             finally:
                 builtins.print = original_print
@@ -286,7 +264,7 @@ class DraftWorker(QThread):
                 break
 
             raw_company = str(row.get("Company", row.get("company", "")))
-            # For USGBC person leads ("Name @ Org"), use org name as company
+            # For "Name @ Org" style entries, use org name as company
             if " @ " in raw_company:
                 company = raw_company.split(" @ ", 1)[1]
             else:
@@ -324,7 +302,7 @@ class DraftWorker(QThread):
 
                         if self.enhanced_params:
                             web_context = ""
-                            # Use org_foundation as context for USGBC org leads
+                            # Use org_foundation as context if available
                             org_foundation = str(row.get("org_foundation", "")).strip()
                             if org_foundation and org_foundation.lower() != "nan":
                                 web_context = f"Company mission/about: {org_foundation}"

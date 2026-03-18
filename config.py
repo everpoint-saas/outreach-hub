@@ -199,29 +199,6 @@ MILLIONVERIFIER_API_KEY_PATH = _env_path(
     os.path.join("secrets", "millionverifier_api_key.txt"),
 )
 
-# --- USGBC ---
-USGBC_BASE_URL = os.getenv("USGBC_BASE_URL", "https://pr-msearch.usgbc.org")
-USGBC_ORG_INDEX = os.getenv(
-    "USGBC_ORG_INDEX",
-    "elasticsearch_index_live_usgbc_usgbc_org_dev",
-)
-USGBC_PERSON_INDEX = os.getenv(
-    "USGBC_PERSON_INDEX",
-    "elasticsearch_index_live_usgbc_persons_dev",
-)
-USGBC_PROJECT_INDEX = os.getenv(
-    "USGBC_PROJECT_INDEX",
-    "elasticsearch_index_live_usgbc_projects_dev",
-)
-USGBC_PAGE_SIZE = _env_int("USGBC_PAGE_SIZE", 100)
-USGBC_REQUEST_DELAY = _env_float("USGBC_REQUEST_DELAY", 1.0)
-USGBC_PROJECT_ACTIVITY_YEARS = _env_int("USGBC_PROJECT_ACTIVITY_YEARS", 2)
-USGBC_DEFAULT_SUBCATEGORIES = _env_list(
-    "USGBC_DEFAULT_SUBCATEGORIES",
-    ["Energy Services", "Engineering"],
-)
-USGBC_DEFAULT_CREDENTIALS = _env_list("USGBC_DEFAULT_CREDENTIALS", [])
-
 # --- Email Validation ---
 VALIDATE_EMAILS = _env_bool("VALIDATE_EMAILS", True)
 MILLIONVERIFIER_API_KEY = os.getenv("MILLIONVERIFIER_API_KEY", "")

@@ -740,8 +740,6 @@ class MainWindow(QMainWindow):
             settings["blacklist"] = self.custom_blacklist
         if self.custom_score_keywords:
             settings["score_keywords"] = self.custom_score_keywords
-        if self.tab_pipeline.chk_project_activity.isChecked():
-            settings["use_project_activity"] = True
 
         self.pipeline_worker = PipelineThread(settings)
         self.pipeline_worker.log_signal.connect(self.log)

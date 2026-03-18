@@ -17,7 +17,6 @@ from datetime import datetime
 
 import config
 import db
-import usgbc_scraper
 import millionverifier
 
 BLACKLIST = config.DEFAULT_BLACKLIST
@@ -45,8 +44,6 @@ def _score_text(lead: dict) -> int:
         "city",
         "state",
         "source",
-        "usgbc_category",
-        "usgbc_subcategory",
         "leed_credential",
     ]
     text = " ".join(str(lead.get(k, "")).lower() for k in text_fields)
@@ -59,36 +56,15 @@ def _score_text(lead: dict) -> int:
         if keyword in text:
             score += points
 
-    # USGBC sources are guaranteed domain relevance.
-    if str(lead.get("source", "")).startswith("usgbc"):
-        score = max(score, 5)
-
     return score
 
 
-def _score_usgbc_org_by_activity(lead: dict) -> int:
-    """For usgbc_org leads, query project activity and return score."""
-    node_id = str(lead.get("org_node_id", "")).strip()
-    return usgbc_scraper.score_from_project_activity(node_id)
-
-
-def recalculate_scores(use_project_activity: bool = False,
-                       log_callback=print) -> int:
+def recalculate_scores(log_callback=print) -> int:
     leads = db.search_leads(limit=100000, offset=0)
     updated = 0
-    activity_checked = 0
 
     for lead in leads:
         score = _score_text(lead)
-
-        # For USGBC org leads, override score with project activity data
-        if use_project_activity and lead.get("source") == "usgbc_org":
-            node_id = str(lead.get("org_node_id", "")).strip()
-            if node_id:
-                score = _score_usgbc_org_by_activity(lead)
-                activity_checked += 1
-                if activity_checked % 50 == 0:
-                    log_callback(f"  Activity checked: {activity_checked} orgs...")
 
         if score < MIN_LEAD_SCORE:
             score = 0
@@ -96,8 +72,6 @@ def recalculate_scores(use_project_activity: bool = False,
             if db.update_lead(int(lead["id"]), {"score": score}):
                 updated += 1
 
-    if activity_checked > 0:
-        log_callback(f"  Project activity checked for {activity_checked} USGBC orgs")
     return updated
 
 
@@ -230,7 +204,7 @@ def verify_emails_millionverifier(log_callback=print) -> tuple[int, int, int]:
     return checked, valid, invalid
 
 
-def process_leads(use_project_activity: bool = False) -> None:
+def process_leads() -> None:
     db.init()
 
     print("\n=== SQLite Pipeline ===")
@@ -238,16 +212,10 @@ def process_leads(use_project_activity: bool = False) -> None:
     print(f"Total leads in DB: {total_leads}")
 
     if total_leads == 0:
-        print("No leads found. Run a scraper first (Google Maps or USGBC).")
+        print("No leads found. Run a scraper first (Google Maps or CSV import).")
         return
 
-    if use_project_activity:
-        print("Project activity scoring ENABLED (will query USGBC API)")
-
-    updated = recalculate_scores(
-        use_project_activity=use_project_activity,
-        log_callback=print,
-    )
+    updated = recalculate_scores(log_callback=print)
     print(f"Scores recalculated/updated: {updated}")
 
     print("Verifying MX records for unchecked emails...")
@@ -312,6 +280,4 @@ def process_leads(use_project_activity: bool = False) -> None:
 
 
 if __name__ == "__main__":
-    import sys
-    use_activity = "--activity" in sys.argv
-    process_leads(use_project_activity=use_activity)
+    process_leads()

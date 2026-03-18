@@ -27,9 +27,6 @@ CREATE TABLE IF NOT EXISTS leads (
     country TEXT DEFAULT 'United States',
     source TEXT NOT NULL,
     source_id TEXT DEFAULT '',
-    usgbc_level TEXT DEFAULT '',
-    usgbc_category TEXT DEFAULT '',
-    usgbc_subcategory TEXT DEFAULT '',
     leed_credential TEXT DEFAULT '',
     member_since TEXT DEFAULT '',
     org_foundation TEXT DEFAULT '',
@@ -168,9 +165,6 @@ def insert_lead(data: dict) -> tuple[Optional[int], bool]:
         "country": data.get("country", "United States"),
         "source": source,
         "source_id": data.get("source_id", ""),
-        "usgbc_level": data.get("usgbc_level", ""),
-        "usgbc_category": data.get("usgbc_category", ""),
-        "usgbc_subcategory": data.get("usgbc_subcategory", ""),
         "leed_credential": data.get("leed_credential", ""),
         "member_since": data.get("member_since", ""),
         "org_foundation": data.get("org_foundation", ""),
@@ -184,7 +178,7 @@ def insert_lead(data: dict) -> tuple[Optional[int], bool]:
         "scraped_at": scraped_at,
     }
 
-    # Flatten any list values from API responses (e.g. USGBC returns arrays)
+    # Flatten any list values from API responses
     for k, v in payload.items():
         if isinstance(v, list):
             payload[k] = ", ".join(str(x) for x in v)
@@ -210,7 +204,6 @@ def insert_lead(data: dict) -> tuple[Optional[int], bool]:
             updatable = [
                 "email", "phone", "website", "contact_person", "title",
                 "city", "state", "org_foundation", "org_node_id", "org_linkedin",
-                "usgbc_level", "usgbc_category", "usgbc_subcategory",
                 "leed_credential", "member_since", "source_id",
             ]
             for field in updatable:
@@ -238,8 +231,7 @@ def update_lead(lead_id: int, data: dict) -> bool:
 
     allowed = {
         "company", "company_norm", "email", "phone", "website", "contact_person", "title", "address",
-        "city", "state", "country", "source", "source_id", "usgbc_level", "usgbc_category",
-        "usgbc_subcategory", "leed_credential", "member_since",
+        "city", "state", "country", "source", "source_id", "leed_credential", "member_since",
         "org_foundation", "org_node_id", "org_linkedin",
         "rating", "review_count", "keyword",
         "score", "email_valid", "scraped_at"
@@ -481,11 +473,6 @@ def select_daily_targets(date: str, count: int = 15) -> list[dict]:
         # Split into US and non-US pools (50/50 slot allocation)
         _candidate_order = """
               CASE WHEN l.email_valid = 2 THEN 0 ELSE 1 END ASC,
-              CASE l.source
-                WHEN 'usgbc_org' THEN 0
-                WHEN 'usgbc_person' THEN 2
-                ELSE 1
-              END ASC,
               l.score DESC,
               l.id DESC
         """

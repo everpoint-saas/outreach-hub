@@ -1,6 +1,6 @@
 ﻿from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QSpinBox, QTableWidget, QAbstractItemView, QHeaderView, QCheckBox
+    QSpinBox, QTableWidget, QAbstractItemView, QHeaderView
 )
 
 import config
@@ -84,12 +84,6 @@ class PipelineTab(QWidget):
         btn_run_pipeline.clicked.connect(on_run_pipeline)
         pipeline_row.addWidget(btn_run_pipeline)
 
-        self.chk_project_activity = QCheckBox("Use Project Activity Scoring (slower)")
-        self.chk_project_activity.setToolTip(
-            "Query USGBC project history per org to score leads by recent activity.\n"
-            "Adds ~1 API call per USGBC org lead. Recommended for first-time scoring."
-        )
-        pipeline_row.addWidget(self.chk_project_activity)
         pipeline_row.addStretch()
         layout.addLayout(pipeline_row)
 
