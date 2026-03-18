@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QPlainTextEdit,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
@@ -100,6 +101,28 @@ class SetupTab(QWidget):
         product_form.addRow("Default CTA:", self.edit_default_cta)
         layout.addWidget(product_group)
 
+        prompt_group = QGroupBox("AI Prompt (Advanced)")
+        prompt_layout = QVBoxLayout(prompt_group)
+        prompt_hint = QLabel(
+            "Customize the rules Gemini follows when writing emails. "
+            "Use {name}, {company}, {product}, {cta} as placeholders. "
+            "Leave blank to use the default prompt."
+        )
+        prompt_hint.setWordWrap(True)
+        prompt_layout.addWidget(prompt_hint)
+        self.edit_email_prompt = QPlainTextEdit(config.CUSTOM_EMAIL_PROMPT)
+        self.edit_email_prompt.setPlaceholderText(
+            "Example:\n"
+            "1. No generic openers like 'I hope you're well'.\n"
+            "2. Mention one operational pain point in one sentence.\n"
+            "3. Body length under 110 words.\n"
+            "4. Subject line under 6 words.\n"
+            "5. Tone: Professional and peer-to-peer."
+        )
+        self.edit_email_prompt.setMaximumHeight(180)
+        prompt_layout.addWidget(self.edit_email_prompt)
+        layout.addWidget(prompt_group)
+
         action_row = QHBoxLayout()
         action_row.addStretch()
         btn_save = QPushButton("Save Setup")
@@ -157,4 +180,5 @@ class SetupTab(QWidget):
             "PRODUCT_TARGET_ROLE": self.edit_target_role.text().strip(),
             "PRODUCT_PAIN_POINT": self.edit_pain_point.text().strip(),
             "DEFAULT_CTA": self.edit_default_cta.text().strip(),
+            "CUSTOM_EMAIL_PROMPT": self.edit_email_prompt.toPlainText().strip(),
         }

@@ -149,6 +149,9 @@ DEFAULT_EMAIL_BODY_TEMPLATE = os.getenv(
     ),
 )
 
+# --- Custom AI Prompt ---
+CUSTOM_EMAIL_PROMPT = os.getenv("CUSTOM_EMAIL_PROMPT", "")
+
 # --- Pipeline Settings ---
 DAILY_TARGET_COUNT = _env_int("DAILY_TARGET_COUNT", 20)
 MIN_LEAD_SCORE = _env_int("MIN_LEAD_SCORE", 2)

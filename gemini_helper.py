@@ -132,6 +132,28 @@ class GeminiHelper:
         )
         cta_text = cta.strip() if cta.strip() else config.DEFAULT_CTA
 
+        default_rules = (
+            '1. No generic openers like "I hope you\'re well" or "I wanted to reach out".\n'
+            f"2. {personalization_rule}\n"
+            "3. Mention one operational pain point in one sentence.\n"
+            "4. Explain how the offer helps in one sentence.\n"
+            f'5. Use this CTA exactly, without rephrasing: "{cta_text}"\n'
+            f"6. Tone: {tone}. Keep it concise and peer-to-peer.\n"
+            "7. Body length under 110 words.\n"
+            "8. Subject line under 6 words.\n"
+            "9. No em dashes.\n"
+            "10. End with the signature block only."
+        )
+
+        custom = config.CUSTOM_EMAIL_PROMPT.strip()
+        if custom:
+            rules_block = custom.replace("{name}", recipient_name or "there")
+            rules_block = rules_block.replace("{company}", company_name)
+            rules_block = rules_block.replace("{product}", config.PRODUCT_NAME)
+            rules_block = rules_block.replace("{cta}", cta_text)
+        else:
+            rules_block = default_rules
+
         prompt = f"""
         You are {config.SENDER_NAME} from {config.SENDER_COMPANY}.
 
@@ -152,16 +174,7 @@ class GeminiHelper:
         - Company Context: {context_block}
 
         Rules:
-        1. No generic openers like "I hope you're well" or "I wanted to reach out".
-        2. {personalization_rule}
-        3. Mention one operational pain point in one sentence.
-        4. Explain how the offer helps in one sentence.
-        5. Use this CTA exactly, without rephrasing: "{cta_text}"
-        6. Tone: {tone}. Keep it concise and peer-to-peer.
-        7. Body length under 110 words.
-        8. Subject line under 6 words.
-        9. No em dashes.
-        10. End with the signature block only.
+        {rules_block}
 
         Exact format:
         Subject: [subject line]
