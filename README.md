@@ -112,3 +112,7 @@ For advanced users: settings are stored in `.env` and can be edited directly.
 - All data stays on your machine (SQLite database in `data/`)
 - Gmail drafts are created locally via OAuth - emails are never sent automatically
 - No data is sent to any server except Gmail API and Gemini API (if enabled)
+
+## Disclaimer
+
+This tool is provided for legitimate business outreach purposes only. Users are responsible for compliance with applicable laws including CAN-SPAM, GDPR, and platform terms of service.
